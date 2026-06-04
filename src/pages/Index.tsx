@@ -61,7 +61,7 @@ const Index = () => {
           >
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary border border-border text-xs font-medium text-secondary-foreground">
               <Sparkles className="h-3.5 w-3.5 text-accent" />
-              Tu plan migratorio, claro desde el primer paso
+              Plataforma + abogado especialista · precio adaptado a tu país
             </div>
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.15] tracking-tight text-balance">
               Encuentra tu mejor camino para venir a{" "}
@@ -211,7 +211,7 @@ const Index = () => {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                {["Resumen del caso", "Checklist documental", "Timeline del proceso", "Recursos oficiales", "Próximo paso", "Tareas personales"].map((m) => (
+                {["Resumen del caso", "Checklist documental", "Timeline del proceso", "Recursos oficiales", "Abogado especialista", "Tareas personales"].map((m) => (
                   <div key={m} className="bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/15 rounded-2xl p-4 text-primary-foreground text-sm font-medium">
                     {m}
                   </div>
@@ -225,52 +225,75 @@ const Index = () => {
       {/* PRICING */}
       <section id="pricing" className="container py-20 lg:py-28 border-t border-border/60">
         <div className="text-center mb-12 max-w-2xl mx-auto">
-          <p className="text-sm font-medium text-primary uppercase tracking-[0.18em] mb-3">Plan único</p>
+          <p className="text-sm font-medium text-primary uppercase tracking-[0.18em] mb-3">Planes</p>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-balance">
-            Empieza con <span className="text-primary">7 días gratis</span>, sin tarjeta
+            Desde <span className="text-primary">información</span> hasta abogado especialista
           </h2>
           <p className="text-muted-foreground mt-4">
-            Acceso completo a tu dashboard, checklist documental y recordatorios. Después, suscripción mensual con precio adaptado a tu país.
+            Precio adaptado a tu país. 7 días gratis sin tarjeta. Cancela cuando quieras.
           </p>
         </div>
-        <div className="max-w-2xl mx-auto bg-card border border-border rounded-3xl p-8 lg:p-10 shadow-elegant relative overflow-hidden">
-          <div className="absolute -top-20 -right-20 h-56 w-56 bg-gradient-primary opacity-10 rounded-full blur-3xl" />
-          <div className="relative">
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-primary font-medium mb-1">Plan mensual</p>
-                <h3 className="font-display text-2xl font-semibold">Ruta a España</h3>
+        <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+          {[
+            {
+              name: "Base",
+              desc: "Diagnóstico + dashboard completo",
+              price: "desde 2 €",
+              period: "/ mes",
+              features: ["Diagnóstico personalizado", "Roadmap por etapas", "Checklist documental", "Recordatorios automáticos"],
+              cta: "Empezar gratis",
+              highlight: false,
+            },
+            {
+              name: "Acompañamiento",
+              desc: "Base + abogado especialista asignado",
+              price: "desde 8 €",
+              period: "/ mes",
+              features: ["Todo lo de Base", "Abogado asignado a tu caso", "Revisión de documentación", "Seguimiento hasta el permiso"],
+              cta: "Quiero Acompañamiento",
+              highlight: true,
+            },
+            {
+              name: "Sesión de Diagnóstico",
+              desc: "Llamada + informe escrito · pago único",
+              price: "desde 7 €",
+              period: "único",
+              features: ["Llamada de 45 minutos", "Informe escrito personalizado", "Mejor ruta para tu perfil", "Entrega en 48h"],
+              cta: "Reservar sesión",
+              highlight: false,
+            },
+          ].map((plan) => (
+            <div key={plan.name} className={`rounded-3xl p-7 relative ${plan.highlight ? "bg-gradient-primary text-primary-foreground shadow-deep" : "bg-card border border-border shadow-elegant"}`}>
+              {plan.highlight && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                  <span className="inline-flex items-center gap-1 bg-accent text-accent-foreground text-xs font-bold px-3 py-1 rounded-full">
+                    <Sparkles className="h-3 w-3" /> Recomendado
+                  </span>
+                </div>
+              )}
+              <p className={`text-xs uppercase tracking-[0.18em] font-medium mb-1 ${plan.highlight ? "opacity-70" : "text-muted-foreground"}`}>{plan.desc}</p>
+              <h3 className="font-display text-xl font-semibold mb-3">{plan.name}</h3>
+              <div className="flex items-baseline gap-1 mb-5">
+                <span className="font-display text-3xl font-semibold">{plan.price}</span>
+                <span className={`text-sm ${plan.highlight ? "opacity-70" : "text-muted-foreground"}`}>{plan.period}</span>
               </div>
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-success/10 text-success text-xs font-medium border border-success/20">
-                <Sparkles className="h-3 w-3" /> 7 días gratis
-              </span>
-            </div>
-            <div className="flex items-baseline gap-2 mb-6">
-              <span className="font-display text-4xl font-semibold">desde 5 €</span>
-              <span className="text-muted-foreground text-sm">/ mes · adaptado a tu país</span>
-            </div>
-            <ul className="grid sm:grid-cols-2 gap-2.5 mb-7">
-              {[
-                "Diagnóstico personalizado",
-                "Checklist documental",
-                "Roadmap por etapas",
-                "Recordatorios con fecha",
-                "Recursos oficiales",
-                "Cancela cuando quieras",
-              ].map((f) => (
-                <li key={f} className="flex items-start gap-2 text-sm">
-                  <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> {f}
-                </li>
-              ))}
-            </ul>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <StartTrialButton fullWidth size="lg" />
-              <Button asChild variant="outline" size="lg">
-                <Link to="/precios">Ver precios por país <ArrowRight className="h-4 w-4" /></Link>
+              <ul className="space-y-2 mb-6">
+                {plan.features.map((f) => (
+                  <li key={f} className={`flex items-start gap-2 text-sm ${plan.highlight ? "" : ""}`}>
+                    <Check className={`h-4 w-4 shrink-0 mt-0.5 ${plan.highlight ? "opacity-90" : "text-primary"}`} /> {f}
+                  </li>
+                ))}
+              </ul>
+              <Button asChild variant={plan.highlight ? "accent" : "outline"} size="sm" className="w-full">
+                <Link to="/precios">{plan.cta} <ArrowRight className="h-3.5 w-3.5" /></Link>
               </Button>
             </div>
-          </div>
+          ))}
         </div>
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          El precio exacto depende de tu país de origen.{" "}
+          <Link to="/precios" className="text-primary underline underline-offset-2">Ver todos los precios →</Link>
+        </p>
       </section>
 
       {/* CONFIANZA */}

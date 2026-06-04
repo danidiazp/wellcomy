@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { getStripeEnvironment } from "@/lib/stripe";
+import { getPlanNameFromPriceId } from "@/lib/pricing";
 import { StartTrialButton } from "@/components/StartTrialButton";
 import { toast } from "sonner";
 
@@ -105,7 +106,7 @@ export function SubscriptionCard({ compact = false }: Props) {
             <p className="text-xs uppercase tracking-[0.18em] text-primary font-medium">Tu suscripción</p>
             <h2 className="font-display text-xl font-semibold flex items-center gap-2">
               {isStripeTrial ? <Sparkles className="h-5 w-5 text-accent" /> : <CheckCircle2 className="h-5 w-5 text-success" />}
-              Plan Ruta a España
+              {getPlanNameFromPriceId(subscription.price_id)}
             </h2>
           </div>
           <Badge variant="outline" className={
