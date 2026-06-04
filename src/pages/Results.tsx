@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { LegalDisclaimer } from "@/components/LegalDisclaimer";
+import { ReferralShare } from "@/components/ReferralShare";
 import { localStore, persistAssessment } from "@/lib/storage";
 import { ROUTE_LABEL, type Recommendation, type RouteSlug, type RouteEvaluation, VIABILITY_LABEL, DIFFICULTY_LABEL } from "@/lib/wizard";
 import { useAuth } from "@/hooks/useAuth";
@@ -334,6 +335,8 @@ const Results = () => {
               </ul>
             </div>
           </div>
+
+          <ReferralShare />
 
           <LegalDisclaimer />
         </div>

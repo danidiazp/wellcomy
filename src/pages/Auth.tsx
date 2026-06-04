@@ -11,6 +11,7 @@ import { Logo } from "@/components/Logo";
 import { PasswordRequirements, isPasswordValid } from "@/components/PasswordRequirements";
 import { toast } from "sonner";
 import { track } from "@/lib/analytics";
+import { consumeReferral } from "@/components/ReferralCapture";
 
 const TRUST_POINTS = [
   { icon: ShieldCheck, text: "Guardamos tu progreso de forma segura" },
@@ -66,6 +67,17 @@ const Auth = () => {
           await supabase.rpc("start_trial_no_card" as never, { _user_id: data.session.user.id } as never);
         } catch (e) {
           console.warn("[auth] no se pudo activar trial automáticamente", e);
+        }
+        // Registrar referido si llegó con ?ref=
+        const referrerId = consumeReferral();
+        if (referrerId && referrerId !== data.session.user.id) {
+          supabase.from("referrals").insert({
+            referrer_id: referrerId,
+            referred_id: data.session.user.id,
+            referred_email: email,
+          }).then(({ error: rErr }) => {
+            if (rErr) console.warn("[referral] no se pudo registrar", rErr.message);
+          });
         }
         track("signup_completed");
         toast.success("Cuenta creada · 7 días gratis activados");

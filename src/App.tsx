@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound.tsx";
 import { PaymentTestModeBanner } from "./components/PaymentTestModeBanner";
 import { TrialBanner } from "./components/TrialBanner";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { ReferralCapture } from "./components/ReferralCapture";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const RoutedShell = () => {
   const location = useLocation();
   return (
     <ErrorBoundary resetKey={location.pathname}>
+      <ReferralCapture />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/diagnostico" element={<Onboarding />} />
