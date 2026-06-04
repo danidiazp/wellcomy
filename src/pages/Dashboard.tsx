@@ -13,6 +13,7 @@ import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 import { SubscriptionCard } from "@/components/SubscriptionCard";
 import { DocumentChecklist, type RouteDoc, type UserDocState } from "@/components/DocumentChecklist";
 import { RoadmapStages, type RoadmapStep } from "@/components/RoadmapStages";
+import { PhaseTracker } from "@/components/PhaseTracker";
 import { TaskList, type Task } from "@/components/TaskList";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -232,6 +233,11 @@ const Dashboard = () => {
             </Button>
           </div>
         </motion.div>
+
+        {/* Phase tracker */}
+        {steps.length > 0 && (
+          <PhaseTracker steps={steps} completedStepIds={completedStepIds} />
+        )}
 
         {/* PRÓXIMO MEJOR PASO — destacado arriba */}
         {nextRouteStep && (
