@@ -27,6 +27,7 @@ type Assessment = {
   missing_requirements_json: any;
   primary_route_id: string | null;
   created_at: string;
+  eligible_fast_track_nationality: boolean | null;
 };
 
 type Route = {
@@ -237,6 +238,27 @@ const Dashboard = () => {
         {/* Phase tracker */}
         {steps.length > 0 && (
           <PhaseTracker steps={steps} completedStepIds={completedStepIds} />
+        )}
+
+        {/* Fast-track nacionalidad (iberoamericanos: 2 años en lugar de 10) */}
+        {assessment.eligible_fast_track_nationality && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="flex items-start gap-4 bg-accent/10 border border-accent/30 rounded-3xl p-5 lg:p-6"
+          >
+            <div className="h-10 w-10 rounded-2xl bg-accent/20 grid place-items-center shrink-0">
+              <Sparkles className="h-5 w-5 text-accent" />
+            </div>
+            <div className="space-y-1 min-w-0">
+              <p className="font-display font-semibold text-sm">Ventaja iberoamericana: nacionalidad en 2 años</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Como nacional de un país iberoamericano, podrás pedir la nacionalidad española tras <strong>2 años de residencia legal</strong> (en lugar de 10 del régimen general). Enfócate en conseguir y mantener tu permiso de residencia.{" "}
+                <a href="https://www.boe.es/buscar/act.php?id=BOE-A-1889-4763&p=20220907&tn=1#a22" target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                  Art. 22 Código Civil ↗
+                </a>
+              </p>
+            </div>
+          </motion.div>
         )}
 
         {/* PRÓXIMO MEJOR PASO — destacado arriba */}
