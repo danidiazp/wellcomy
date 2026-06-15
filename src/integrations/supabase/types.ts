@@ -255,6 +255,45 @@ export type Database = {
           },
         ]
       }
+      plan_prices: {
+        Row: {
+          active: boolean
+          created_at: string
+          eur_amount: number
+          id: string
+          is_recurring: boolean
+          plan_description: string | null
+          plan_name: string
+          plan_slug: string
+          pricing_tier: string
+          stripe_price_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          eur_amount: number
+          id?: string
+          is_recurring?: boolean
+          plan_description?: string | null
+          plan_name: string
+          plan_slug: string
+          pricing_tier: string
+          stripe_price_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          eur_amount?: number
+          id?: string
+          is_recurring?: boolean
+          plan_description?: string | null
+          plan_name?: string
+          plan_slug?: string
+          pricing_tier?: string
+          stripe_price_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           active_process_nationality: string | null
