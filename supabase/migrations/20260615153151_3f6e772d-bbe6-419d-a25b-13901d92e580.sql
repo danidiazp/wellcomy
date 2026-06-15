@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.notify_send_welcome_email() FROM PUBLIC;
