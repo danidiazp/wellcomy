@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           alternative_route_ids_json: Json | null
           created_at: string
+          eligible_fast_track_nationality: boolean | null
           explanation: string | null
           id: string
           missing_requirements_json: Json | null
@@ -28,6 +29,7 @@ export type Database = {
         Insert: {
           alternative_route_ids_json?: Json | null
           created_at?: string
+          eligible_fast_track_nationality?: boolean | null
           explanation?: string | null
           id?: string
           missing_requirements_json?: Json | null
@@ -38,6 +40,7 @@ export type Database = {
         Update: {
           alternative_route_ids_json?: Json | null
           created_at?: string
+          eligible_fast_track_nationality?: boolean | null
           explanation?: string | null
           id?: string
           missing_requirements_json?: Json | null
@@ -199,6 +202,59 @@ export type Database = {
         }
         Relationships: []
       }
+      onboarding_requests: {
+        Row: {
+          availability: string | null
+          country_code: string | null
+          created_at: string
+          email: string
+          id: string
+          name: string
+          notes: string | null
+          payment_method: string
+          profile_id: string | null
+          status: string
+          stripe_session_id: string | null
+          timezone: string | null
+        }
+        Insert: {
+          availability?: string | null
+          country_code?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          notes?: string | null
+          payment_method?: string
+          profile_id?: string | null
+          status?: string
+          stripe_session_id?: string | null
+          timezone?: string | null
+        }
+        Update: {
+          availability?: string | null
+          country_code?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          payment_method?: string
+          profile_id?: string | null
+          status?: string
+          stripe_session_id?: string | null
+          timezone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_requests_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           active_process_nationality: string | null
@@ -221,6 +277,7 @@ export type Database = {
           nationality: string | null
           preferred_language: string | null
           primary_nationality: string | null
+          referral_credits_months: number
           second_nationality: string | null
           study_admission: boolean | null
           timeline_goal: string | null
@@ -248,6 +305,7 @@ export type Database = {
           nationality?: string | null
           preferred_language?: string | null
           primary_nationality?: string | null
+          referral_credits_months?: number
           second_nationality?: string | null
           study_admission?: boolean | null
           timeline_goal?: string | null
@@ -275,6 +333,7 @@ export type Database = {
           nationality?: string | null
           preferred_language?: string | null
           primary_nationality?: string | null
+          referral_credits_months?: number
           second_nationality?: string | null
           study_admission?: boolean | null
           timeline_goal?: string | null
@@ -282,6 +341,51 @@ export type Database = {
           work_offer?: boolean | null
         }
         Relationships: []
+      }
+      referrals: {
+        Row: {
+          converted_at: string | null
+          created_at: string
+          id: string
+          referred_email: string | null
+          referred_id: string | null
+          referrer_id: string
+          status: string
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string
+          id?: string
+          referred_email?: string | null
+          referred_id?: string | null
+          referrer_id: string
+          status?: string
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string
+          id?: string
+          referred_email?: string | null
+          referred_id?: string | null
+          referrer_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_referred_id_fkey"
+            columns: ["referred_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       resources: {
         Row: {
@@ -560,6 +664,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      convert_referral: { Args: { p_referred_id: string }; Returns: undefined }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean

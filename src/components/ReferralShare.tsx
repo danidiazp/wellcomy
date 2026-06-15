@@ -21,12 +21,16 @@ export function ReferralShare({ compact = false }: Props) {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("referral_credits_months").eq("id", user.id).maybeSingle()
-      .then(({ data }) => { if (data) setCredits((data as any).referral_credits_months ?? 0); })
-      .catch(() => {});
-    supabase.from("referrals").select("id", { count: "exact", head: true }).eq("referrer_id", user.id)
-      .then(({ count }) => { if (count != null) setReferralCount(count); })
-      .catch(() => {});
+    (async () => {
+      try {
+        const { data } = await supabase.from("profiles").select("referral_credits_months").eq("id", user.id).maybeSingle();
+        if (data) setCredits((data as any).referral_credits_months ?? 0);
+      } catch { /* noop */ }
+      try {
+        const { count } = await (supabase as any).from("referrals").select("id", { count: "exact", head: true }).eq("referrer_id", user.id);
+        if (count != null) setReferralCount(count);
+      } catch { /* noop */ }
+    })();
   }, [user]);
 
   if (!user) return null;

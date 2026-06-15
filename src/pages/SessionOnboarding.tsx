@@ -62,11 +62,13 @@ const SessionOnboarding = () => {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("active_process_nationality, primary_nationality").eq("id", user.id).maybeSingle()
-      .then(({ data }) => {
+    (async () => {
+      try {
+        const { data } = await supabase.from("profiles").select("active_process_nationality, primary_nationality").eq("id", user.id).maybeSingle();
         const def = data?.active_process_nationality ?? data?.primary_nationality ?? "";
         if (def) setCountry(def);
-      }).catch(() => {});
+      } catch { /* noop */ }
+    })();
   }, [user]);
 
   useEffect(() => {
