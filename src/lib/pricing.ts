@@ -81,7 +81,7 @@ export async function getPlanBundleForCountry(code: CountryCode | string): Promi
   const country = await getPricingForCountry(code);
   if (!country) return null;
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("plan_prices")
     .select("plan_slug, plan_name, plan_description, pricing_tier, eur_amount, stripe_price_id, is_recurring")
     .eq("pricing_tier", country.pricing_tier)

@@ -77,11 +77,14 @@ const Pricing = () => {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    supabase.from("profiles").select("active_process_nationality, primary_nationality").eq("id", user.id).maybeSingle().then(({ data }) => {
-      if (cancelled) return;
-      const def = data?.active_process_nationality ?? data?.primary_nationality ?? "";
-      if (def) setCountry(def);
-    }).catch(() => {});
+    (async () => {
+      try {
+        const { data } = await supabase.from("profiles").select("active_process_nationality, primary_nationality").eq("id", user.id).maybeSingle();
+        if (cancelled) return;
+        const def = data?.active_process_nationality ?? data?.primary_nationality ?? "";
+        if (def) setCountry(def);
+      } catch { /* noop */ }
+    })();
     return () => { cancelled = true; };
   }, [user]);
 
