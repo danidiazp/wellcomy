@@ -1,11 +1,24 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { type StripeEnv, verifyWebhook } from "../_shared/stripe.ts";
+import { sendTransactionalEmail } from "../_shared/email.ts";
+import {
+  trialStartedEmail,
+  paymentReceiptEmail,
+  paymentFailedEmail,
+  subscriptionCanceledEmail,
+} from "../_shared/email-templates.ts";
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
+
+async function getUserEmail(userId: string): Promise<string | null> {
+  const { data, error } = await supabase.auth.admin.getUserById(userId);
+  if (error || !data?.user?.email) return null;
+  return data.user.email;
+}
 
 serve(async (req) => {
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
@@ -54,6 +67,12 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
     selected_pricing_country: session.metadata?.selectedPricingCountry ?? null,
     subscription_status: "checkout_completed",
   }, { onConflict: "user_id" });
+
+  const email = await getUserEmail(userId);
+  if (email) {
+    const { subject, html } = trialStartedEmail();
+    await sendTransactionalEmail({ to: email, subject, html });
+  }
 }
 
 async function upsertSubscription(sub: any, env: StripeEnv) {
@@ -100,6 +119,15 @@ async function markCanceled(sub: any, env: StripeEnv) {
     await supabase.from("billing_profiles").update({
       subscription_status: "canceled",
     }).eq("user_id", sub.metadata.userId);
+
+    const email = await getUserEmail(sub.metadata.userId);
+    if (email) {
+      const periodEnd = sub.current_period_end
+        ? new Date(sub.current_period_end * 1000).toLocaleDateString("es-ES")
+        : undefined;
+      const { subject, html } = subscriptionCanceledEmail(periodEnd);
+      await sendTransactionalEmail({ to: email, subject, html });
+    }
   }
 }
 
@@ -110,6 +138,23 @@ async function handleInvoicePaid(invoice: any, env: StripeEnv) {
     status: "active",
     updated_at: new Date().toISOString(),
   }).eq("stripe_subscription_id", subId).eq("environment", env);
+
+  const { data: sub } = await supabase.from("subscriptions")
+    .select("user_id, current_period_end")
+    .eq("stripe_subscription_id", subId).eq("environment", env).maybeSingle();
+
+  if (sub?.user_id) {
+    const email = await getUserEmail(sub.user_id);
+    if (email) {
+      const amount = ((invoice.amount_paid ?? 0) / 100).toFixed(2);
+      const currency = (invoice.currency ?? "eur").toUpperCase();
+      const periodEnd = sub.current_period_end
+        ? new Date(sub.current_period_end).toLocaleDateString("es-ES")
+        : undefined;
+      const { subject, html } = paymentReceiptEmail(amount, currency, periodEnd);
+      await sendTransactionalEmail({ to: email, subject, html });
+    }
+  }
 }
 
 async function handleInvoiceFailed(invoice: any, env: StripeEnv) {
@@ -119,4 +164,16 @@ async function handleInvoiceFailed(invoice: any, env: StripeEnv) {
     status: "past_due",
     updated_at: new Date().toISOString(),
   }).eq("stripe_subscription_id", subId).eq("environment", env);
+
+  const { data: sub } = await supabase.from("subscriptions")
+    .select("user_id")
+    .eq("stripe_subscription_id", subId).eq("environment", env).maybeSingle();
+
+  if (sub?.user_id) {
+    const email = await getUserEmail(sub.user_id);
+    if (email) {
+      const { subject, html } = paymentFailedEmail();
+      await sendTransactionalEmail({ to: email, subject, html });
+    }
+  }
 }
