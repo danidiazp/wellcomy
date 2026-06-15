@@ -30,7 +30,7 @@ export const SiteFooter = () => (
     </div>
     <div className="border-t border-border/60">
       <div className="container py-5 flex flex-col sm:flex-row justify-between gap-3 text-xs text-muted-foreground">
-        <p>© {new Date().getFullYear()} Ruta a España. Información orientativa, no sustituye asesoramiento jurídico.</p>
+        <p>© {new Date().getFullYear()} Wellcomy. Información orientativa, no sustituye asesoramiento jurídico.</p>
         <p>Datos basados en fuentes oficiales del Gobierno de España.</p>
       </div>
     </div>

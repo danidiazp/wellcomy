@@ -58,11 +58,11 @@ export const TIER_PRICE_ID: Record<PricingTier, string> = {
 
 // Detect plan name from a Stripe price_id string.
 export function getPlanNameFromPriceId(priceId: string | null | undefined): string {
-  if (!priceId) return "Ruta a España";
+  if (!priceId) return "Wellcomy";
   if (priceId.includes("acomp")) return "Acompañamiento";
   if (priceId.includes("onboarding")) return "Sesión de Diagnóstico";
   if (priceId.includes("base")) return "Base";
-  return "Ruta a España";
+  return "Wellcomy";
 }
 
 export async function getPricingForCountry(code: CountryCode | string): Promise<CountryPricing | null> {

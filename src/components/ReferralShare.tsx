@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const BASE_URL = typeof window !== "undefined" ? window.location.origin : "https://your-spain-path.lovable.app";
+const BASE_URL = typeof window !== "undefined" ? window.location.origin : "https://wellcomy.com";
 
 interface Props {
   /** compact: inline strip for dashboard; default: card for results page */
