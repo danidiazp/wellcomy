@@ -89,3 +89,48 @@ export function subscriptionCanceledEmail(periodEnd?: string): { subject: string
     ),
   };
 }
+
+export function welcomeEmail(name?: string): { subject: string; html: string } {
+  const greeting = name ? `¡Hola, ${name}!` : "¡Hola!";
+  return {
+    subject: "Bienvenido/a a Wellcomy",
+    html: layout(
+      `${greeting} Bienvenido/a a Wellcomy 👋`,
+      `<p>Gracias por crear tu cuenta. Wellcomy te ayuda a encontrar la ruta legal más adecuada para venir a España, con un diagnóstico personalizado, checklist documental y un roadmap claro paso a paso.</p>
+       <p>Si todavía no lo has hecho, completa tu diagnóstico para empezar a recibir tu plan personalizado.</p>`,
+      "Completar mi diagnóstico",
+      `${SITE_URL}/diagnostico`,
+    ),
+  };
+}
+
+export interface DashboardSummaryData {
+  name?: string | null;
+  routeName?: string | null;
+  pendingTasks: number;
+  nextTask?: string | null;
+}
+
+export function dashboardSummaryEmail({ name, routeName, pendingTasks, nextTask }: DashboardSummaryData): { subject: string; html: string } {
+  const greeting = name ? `Hola, ${name}` : "Hola";
+  const routeLine = routeName
+    ? `<p>Tu ruta principal recomendada es <strong>${routeName}</strong>.</p>`
+    : "";
+  const tasksLine = pendingTasks > 0
+    ? `<p>Tienes <strong>${pendingTasks}</strong> ${pendingTasks === 1 ? "tarea pendiente" : "tareas pendientes"} en tu checklist.</p>`
+    : `<p>¡Estás al día! No tienes tareas pendientes en tu checklist.</p>`;
+  const nextLine = nextTask
+    ? `<p>Tu próximo paso: <strong>${nextTask}</strong>.</p>`
+    : "";
+
+  return {
+    subject: "Tu resumen semanal en Wellcomy",
+    html: layout(
+      `${greeting}, esto es lo que tienes pendiente`,
+      `${routeLine}${tasksLine}${nextLine}
+       <p>Entra a tu panel para ver el detalle completo de tu checklist y tu timeline.</p>`,
+      "Ir a mi panel",
+      `${SITE_URL}/dashboard`,
+    ),
+  };
+}
