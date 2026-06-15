@@ -31,8 +31,8 @@ export async function sendTransactionalEmail({ to, subject, html }: SendEmailPar
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${lovableApiKey}`,
         "X-Connection-Api-Key": connectionApiKey,
-        "Lovable-API-Key": lovableApiKey,
       },
       body: JSON.stringify({ from: FROM_ADDRESS, to: [to], subject, html }),
     });
