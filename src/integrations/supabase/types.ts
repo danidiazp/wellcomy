@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           alternative_route_ids_json: Json | null
           created_at: string
+          eligible_fast_track_nationality: boolean | null
           explanation: string | null
           id: string
           missing_requirements_json: Json | null
@@ -28,6 +29,7 @@ export type Database = {
         Insert: {
           alternative_route_ids_json?: Json | null
           created_at?: string
+          eligible_fast_track_nationality?: boolean | null
           explanation?: string | null
           id?: string
           missing_requirements_json?: Json | null
@@ -38,6 +40,7 @@ export type Database = {
         Update: {
           alternative_route_ids_json?: Json | null
           created_at?: string
+          eligible_fast_track_nationality?: boolean | null
           explanation?: string | null
           id?: string
           missing_requirements_json?: Json | null
