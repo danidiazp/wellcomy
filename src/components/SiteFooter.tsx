@@ -1,6 +1,14 @@
 import { Link } from "react-router-dom";
 import { Logo } from "./Logo";
 
+const OFFICIAL_SOURCES = [
+  { name: "Ministerio de Asuntos Exteriores", url: "https://www.exteriores.gob.es" },
+  { name: "Portal de Inmigración", url: "https://extranjeros.inclusion.gob.es" },
+  { name: "Sede Electrónica AGE", url: "https://sede.administracion.gob.es" },
+  { name: "Policía Nacional", url: "https://www.policia.es" },
+  { name: "Ministerio de Justicia", url: "https://www.mjusticia.gob.es" },
+];
+
 export const SiteFooter = () => (
   <footer className="border-t border-border/60 mt-24 bg-card/50">
     <div className="container py-12 grid gap-10 md:grid-cols-4">
@@ -26,6 +34,26 @@ export const SiteFooter = () => (
           <li><Link to="/recursos" className="hover:text-foreground">Recursos oficiales</Link></li>
           <li><Link to="/auth" className="hover:text-foreground">Crear cuenta</Link></li>
         </ul>
+      </div>
+    </div>
+    <div className="border-t border-border/60">
+      <div className="container py-8">
+        <p className="text-xs font-medium text-muted-foreground uppercase tracking-[0.18em] mb-4">
+          Fuentes oficiales consultadas
+        </p>
+        <div className="flex flex-wrap gap-x-3 gap-y-2">
+          {OFFICIAL_SOURCES.map((s) => (
+            <a
+              key={s.name}
+              href={s.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs px-3.5 py-1.5 rounded-full bg-secondary border border-border text-secondary-foreground hover:border-primary hover:text-primary transition-colors"
+            >
+              {s.name}
+            </a>
+          ))}
+        </div>
       </div>
     </div>
     <div className="border-t border-border/60">
