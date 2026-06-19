@@ -84,6 +84,9 @@ export const HeroGlobe = () => {
 
   useEffect(() => {
     if (!globeRef.current) return;
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const controls = globeRef.current.controls();
     if (controls) {
       controls.autoRotate = false; // Empieza quieto, enfoca España
@@ -92,11 +95,49 @@ export const HeroGlobe = () => {
     }
     // Foco inicial: Madrid / Europa occidental
     globeRef.current.pointOfView({ lat: 40.4168, lng: -3.7038, altitude: 2.0 }, 0);
+    if (prefersReducedMotion) return;
     // Activa rotación suave después de 2.5s para no robar protagonismo al titular
     const t = setTimeout(() => {
       if (controls) controls.autoRotate = true;
     }, 2500);
     return () => clearTimeout(t);
+  }, [GlobeComp]);
+
+  // Pausa el bucle de renderizado WebGL cuando el globo no está visible
+  // (scrolleado fuera de pantalla o pestaña en segundo plano). Esto evita
+  // que el requestAnimationFrame de three.js siga repintando la GPU y
+  // provoque tirones al hacer scroll por el resto de la página.
+  useEffect(() => {
+    if (!GlobeComp || !containerRef.current) return;
+    let inView = true;
+    let pageVisible = !document.hidden;
+
+    const apply = () => {
+      const globe = globeRef.current;
+      if (!globe) return;
+      if (inView && pageVisible) globe.resumeAnimation?.();
+      else globe.pauseAnimation?.();
+    };
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        apply();
+      },
+      { threshold: 0 }
+    );
+    io.observe(containerRef.current);
+
+    const onVisibility = () => {
+      pageVisible = !document.hidden;
+      apply();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, [GlobeComp]);
 
   if (shouldRender === false) return <StaticFallback />;
