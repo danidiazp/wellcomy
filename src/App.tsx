@@ -19,6 +19,7 @@ import Profile from "./pages/Profile.tsx";
 import Pricing from "./pages/Pricing.tsx";
 import CheckoutReturn from "./pages/CheckoutReturn.tsx";
 import SessionOnboarding from "./pages/SessionOnboarding.tsx";
+import Agenda from "./pages/Agenda.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { PaymentTestModeBanner } from "./components/PaymentTestModeBanner";
 import { TrialBanner } from "./components/TrialBanner";
@@ -44,6 +45,7 @@ const RoutedShell = () => {
         <Route path="/precios" element={<Pricing />} />
         <Route path="/checkout/return" element={<CheckoutReturn />} />
         <Route path="/sesion-diagnostico" element={<SessionOnboarding />} />
+        <Route path="/agenda" element={<Agenda />} />
         {/* Premium-gated: solo el dashboard requiere trial/suscripción */}
         <Route path="/dashboard" element={<RequireSubscription><Dashboard /></RequireSubscription>} />
         {/* Contenido público — accesible sin pago para marketing y SEO */}

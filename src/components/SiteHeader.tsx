@@ -14,6 +14,7 @@ export const SiteHeader = () => {
     { to: "/rutas/trabajo", label: "Trabajo" },
     { to: "/rutas/reagrupacion-familiar", label: "Familia" },
     { to: "/recursos", label: "Recursos" },
+    { to: "/agenda", label: "Agenda" },
     { to: "/precios", label: "Precios" },
   ];
 
