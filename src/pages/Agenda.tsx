@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { CalendarClock, CalendarCheck, ShieldCheck, Clock } from "lucide-react";
+import { CalendarClock, CalendarCheck, ShieldCheck, Clock, Lock, ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import { track } from "@/lib/analytics";
 
 // Página de reservas de Google Calendar (Appointment schedule) embebida.
@@ -19,10 +21,73 @@ const HIGHLIGHTS = [
   { icon: ShieldCheck, title: "Asesor especialista", desc: "Orientación experta sobre tu ruta migratoria a España." },
 ];
 
+const BookingCalendar = () =>
+  BOOKING_URL ? (
+    <iframe
+      src={BOOKING_URL}
+      title="Reserva tu consulta"
+      className="w-full rounded-3xl border border-border bg-card"
+      style={{ minWidth: "320px", height: "720px" }}
+      frameBorder={0}
+    />
+  ) : (
+    <div className="rounded-3xl border border-dashed border-border bg-card/50 p-12 text-center max-w-2xl mx-auto">
+      <CalendarClock className="h-10 w-10 text-muted-foreground mx-auto mb-4" />
+      <h2 className="font-display text-xl font-semibold mb-2">Agenda disponible muy pronto</h2>
+      <p className="text-sm text-muted-foreground mb-6">
+        Estamos terminando de configurar la agenda del asesor. Mientras tanto, empieza tu
+        diagnóstico gratuito para llegar a la consulta con tu caso ya preparado.
+      </p>
+      <Button asChild variant="hero" size="lg">
+        <Link to="/diagnostico">Empezar diagnóstico</Link>
+      </Button>
+    </div>
+  );
+
+// Pantalla para quien aún no puede reservar: invita a reservar la Sesión de
+// Diagnóstico (pago único) o a suscribirse a un plan.
+const LockedBooking = () => (
+  <div className="rounded-3xl border border-border bg-card p-8 lg:p-12 shadow-elegant max-w-2xl mx-auto relative overflow-hidden">
+    <div className="absolute -top-24 -right-24 h-64 w-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="relative space-y-6">
+      <div className="flex items-center gap-3">
+        <div className="h-12 w-12 rounded-2xl bg-secondary border border-border grid place-items-center">
+          <Lock className="h-5 w-5 text-muted-foreground" />
+        </div>
+        <div>
+          <p className="text-xs uppercase tracking-[0.18em] text-primary font-medium">Reserva para clientes</p>
+          <h2 className="font-display text-2xl font-semibold">Agendar una consulta requiere un plan</h2>
+        </div>
+      </div>
+      <p className="text-muted-foreground">
+        La consulta con un asesor está incluida en los planes de suscripción. Si todavía no tienes
+        plan, puedes reservar una <strong>Sesión de Diagnóstico</strong> (pago único, sin suscripción)
+        y agendar tu llamada tras el pago.
+      </p>
+      <div className="flex flex-col sm:flex-row gap-3 pt-1">
+        <Button asChild variant="hero" size="lg">
+          <Link to="/sesion-diagnostico">Reservar Sesión de Diagnóstico <ArrowRight className="h-4 w-4" /></Link>
+        </Button>
+        <Button asChild variant="outline" size="lg">
+          <Link to="/precios">Ver planes de suscripción</Link>
+        </Button>
+      </div>
+    </div>
+  </div>
+);
+
 const Agenda = () => {
+  const { loading: authLoading } = useAuth();
+  const { accessSource, loading: subLoading } = useSubscription();
+
   useEffect(() => {
     track("agenda_viewed");
   }, []);
+
+  // Solo los suscriptores de pago agendan sin pagar. La prueba gratis sin
+  // tarjeta (accessSource === "trial_no_card") NO da acceso a la reserva.
+  const canBook = accessSource === "paid";
+  const loading = authLoading || subLoading;
 
   return (
     <div className="min-h-screen bg-background">
@@ -57,26 +122,14 @@ const Agenda = () => {
       </section>
 
       <section className="container pb-20">
-        {BOOKING_URL ? (
-          <iframe
-            src={BOOKING_URL}
-            title="Reserva tu consulta"
-            className="w-full rounded-3xl border border-border bg-card"
-            style={{ minWidth: "320px", height: "720px" }}
-            frameBorder={0}
-          />
-        ) : (
-          <div className="rounded-3xl border border-dashed border-border bg-card/50 p-12 text-center max-w-2xl mx-auto">
-            <CalendarClock className="h-10 w-10 text-muted-foreground mx-auto mb-4" />
-            <h2 className="font-display text-xl font-semibold mb-2">Agenda disponible muy pronto</h2>
-            <p className="text-sm text-muted-foreground mb-6">
-              Estamos terminando de configurar la agenda del asesor. Mientras tanto, empieza tu
-              diagnóstico gratuito para llegar a la consulta con tu caso ya preparado.
-            </p>
-            <Button asChild variant="hero" size="lg">
-              <Link to="/diagnostico">Empezar diagnóstico</Link>
-            </Button>
+        {loading ? (
+          <div className="grid place-items-center py-20">
+            <div className="h-10 w-10 rounded-full border-2 border-primary border-t-transparent animate-spin" />
           </div>
+        ) : canBook ? (
+          <BookingCalendar />
+        ) : (
+          <LockedBooking />
         )}
       </section>
 
