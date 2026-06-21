@@ -115,6 +115,50 @@ export type Database = {
         }
         Relationships: []
       }
+      consultations: {
+        Row: {
+          amount_eur: number | null
+          created_at: string
+          environment: string
+          id: string
+          is_free: boolean
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_eur?: number | null
+          created_at?: string
+          environment?: string
+          id?: string
+          is_free?: boolean
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_eur?: number | null
+          created_at?: string
+          environment?: string
+          id?: string
+          is_free?: boolean
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       country_pricing_tiers: {
         Row: {
           active: boolean
