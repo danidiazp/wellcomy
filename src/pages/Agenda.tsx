@@ -44,49 +44,54 @@ const BookingCalendar = () =>
     </div>
   );
 
-// Pantalla para quien aún no puede reservar: invita a reservar la Sesión de
-// Diagnóstico (pago único) o a suscribirse a un plan.
-const LockedBooking = () => (
-  <div className="rounded-3xl border border-border bg-card p-8 lg:p-12 shadow-elegant max-w-2xl mx-auto relative overflow-hidden">
-    <div className="absolute -top-24 -right-24 h-64 w-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-    <div className="relative space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="h-12 w-12 rounded-2xl bg-secondary border border-border grid place-items-center">
-          <Lock className="h-5 w-5 text-muted-foreground" />
+// Pantalla para quien aún no puede reservar. Las citas con asesor son
+// exclusivas del plan Acompañamiento (premium); el mensaje se adapta a si el
+// usuario ya tiene plan Base o todavía no tiene ninguno.
+const LockedBooking = ({ tier }: { tier: "base" | "trial" | "none" }) => {
+  const isBase = tier === "base";
+  return (
+    <div className="rounded-3xl border border-border bg-card p-8 lg:p-12 shadow-elegant max-w-2xl mx-auto relative overflow-hidden">
+      <div className="absolute -top-24 -right-24 h-64 w-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 rounded-2xl bg-secondary border border-border grid place-items-center">
+            <Lock className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-[0.18em] text-primary font-medium">Incluido en Acompañamiento</p>
+            <h2 className="font-display text-2xl font-semibold">Las citas son del plan Acompañamiento</h2>
+          </div>
         </div>
-        <div>
-          <p className="text-xs uppercase tracking-[0.18em] text-primary font-medium">Reserva para clientes</p>
-          <h2 className="font-display text-2xl font-semibold">Agendar una consulta requiere un plan</h2>
+        <p className="text-muted-foreground">
+          {isBase
+            ? "Tu plan Base te da acceso a todo el proceso (roadmap, documentos y recursos). Las consultas de 30 minutos con un asesor están incluidas en el plan Acompañamiento."
+            : "Las consultas de 30 minutos con un asesor están incluidas en el plan Acompañamiento. También puedes reservar una Sesión de Diagnóstico (pago único) si solo quieres una llamada puntual."}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 pt-1">
+          <Button asChild variant="hero" size="lg">
+            <Link to="/precios">{isBase ? "Mejorar a Acompañamiento" : "Ver planes"} <ArrowRight className="h-4 w-4" /></Link>
+          </Button>
+          {!isBase && (
+            <Button asChild variant="outline" size="lg">
+              <Link to="/sesion-diagnostico">Reservar Sesión de Diagnóstico</Link>
+            </Button>
+          )}
         </div>
-      </div>
-      <p className="text-muted-foreground">
-        La consulta con un asesor está incluida en los planes de suscripción. Si todavía no tienes
-        plan, puedes reservar una <strong>Sesión de Diagnóstico</strong> (pago único, sin suscripción)
-        y agendar tu llamada tras el pago.
-      </p>
-      <div className="flex flex-col sm:flex-row gap-3 pt-1">
-        <Button asChild variant="hero" size="lg">
-          <Link to="/sesion-diagnostico">Reservar Sesión de Diagnóstico <ArrowRight className="h-4 w-4" /></Link>
-        </Button>
-        <Button asChild variant="outline" size="lg">
-          <Link to="/precios">Ver planes de suscripción</Link>
-        </Button>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const Agenda = () => {
   const { loading: authLoading } = useAuth();
-  const { accessSource, loading: subLoading } = useSubscription();
+  const { planTier, loading: subLoading } = useSubscription();
 
   useEffect(() => {
     track("agenda_viewed");
   }, []);
 
-  // Solo los suscriptores de pago agendan sin pagar. La prueba gratis sin
-  // tarjeta (accessSource === "trial_no_card") NO da acceso a la reserva.
-  const canBook = accessSource === "paid";
+  // Las citas con asesor son exclusivas del plan Acompañamiento (premium).
+  const canBook = planTier === "premium";
   const loading = authLoading || subLoading;
 
   return (
@@ -129,7 +134,7 @@ const Agenda = () => {
         ) : canBook ? (
           <BookingCalendar />
         ) : (
-          <LockedBooking />
+          <LockedBooking tier={planTier === "base" ? "base" : planTier === "trial" ? "trial" : "none"} />
         )}
       </section>
 

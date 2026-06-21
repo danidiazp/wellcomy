@@ -91,6 +91,20 @@ export function useSubscription() {
   const accessSource: "paid" | "trial_no_card" | "none" =
     hasPaidAccess ? "paid" : hasNoCardTrial ? "trial_no_card" : "none";
 
+  // Tier de plan, para gating granular:
+  //  - "premium": suscripción de pago Acompañamiento (incluye citas con asesor)
+  //  - "base":    suscripción de pago Base (proceso completo, sin citas)
+  //  - "trial":   prueba gratis sin tarjeta (solo el próximo paso)
+  //  - "none":    sin acceso
+  const priceId = sub?.price_id ?? "";
+  const planTier: "premium" | "base" | "trial" | "none" = hasPaidAccess
+    ? priceId.includes("acomp")
+      ? "premium"
+      : "base"
+    : hasNoCardTrial
+    ? "trial"
+    : "none";
+
   return {
     subscription: sub,
     billing,
@@ -99,6 +113,7 @@ export function useSubscription() {
     isTrialing,
     hasNoCardTrial,
     accessSource,
+    planTier,
     trialEnd,
     refresh,
   };
