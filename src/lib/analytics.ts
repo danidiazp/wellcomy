@@ -33,7 +33,8 @@ export type AnalyticsEvent =
   | "dashboard_viewed"
   | "task_completed"
   | "task_created"
-  | "route_detail_viewed";
+  | "route_detail_viewed"
+  | "agenda_viewed";
 
 export type AnalyticsProps = Record<string, string | number | boolean | null | undefined>;
 
