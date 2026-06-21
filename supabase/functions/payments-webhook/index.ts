@@ -60,6 +60,24 @@ serve(async (req) => {
 async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   const userId = session.metadata?.userId;
   if (!userId) return;
+
+  // Reserva de consulta (pago único): confirmar la fila y terminar.
+  if (session.metadata?.type === "consultation") {
+    await supabase.from("consultations").update({
+      status: "reserved",
+      stripe_payment_intent_id: session.payment_intent ?? null,
+    }).eq("stripe_session_id", session.id);
+
+    const email = await getUserEmail(userId);
+    if (email) {
+      const amount = ((session.amount_total ?? 0) / 100).toFixed(2);
+      const currency = (session.currency ?? "eur").toUpperCase();
+      const { subject, html } = paymentReceiptEmail(amount, currency);
+      await sendTransactionalEmail({ to: email, subject, html });
+    }
+    return;
+  }
+
   // Vincular customer al usuario antes de que llegue subscription.created
   await supabase.from("billing_profiles").upsert({
     user_id: userId,

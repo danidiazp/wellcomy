@@ -18,7 +18,7 @@ import { RoadmapStages, type RoadmapStep } from "@/components/RoadmapStages";
 import { PhaseTracker } from "@/components/PhaseTracker";
 import { ReferralShare } from "@/components/ReferralShare";
 import { TaskList, type Task } from "@/components/TaskList";
-import { BookingCalendar } from "@/components/BookingCalendar";
+import { ConsultationBooking } from "@/components/ConsultationBooking";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
@@ -553,7 +553,7 @@ const Dashboard = () => {
       <p className="text-sm text-muted-foreground -mt-3">
         Reserva tu consulta de 30 minutos con un asesor. Disponibilidad en tiempo real y videollamada de Google Meet.
       </p>
-      <BookingCalendar />
+      <ConsultationBooking />
     </div>
   );
 

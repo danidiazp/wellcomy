@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { CalendarClock, CalendarCheck, ShieldCheck, Clock, Lock, ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { BookingCalendar } from "@/components/BookingCalendar";
+import { ConsultationBooking } from "@/components/ConsultationBooking";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -103,7 +103,7 @@ const Agenda = () => {
             <div className="h-10 w-10 rounded-full border-2 border-primary border-t-transparent animate-spin" />
           </div>
         ) : canBook ? (
-          <BookingCalendar />
+          <ConsultationBooking />
         ) : (
           <LockedBooking tier={planTier === "base" ? "base" : planTier === "trial" ? "trial" : "none"} />
         )}
